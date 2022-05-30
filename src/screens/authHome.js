@@ -3,11 +3,9 @@ import axios from 'axios';
 import { 
     View, 
     StyleSheet,
-    Text,
-    // Image,
     TouchableOpacity,
     ScrollView,
-    TextInput,
+    RefreshControl,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getData } from '../localStorage';
@@ -61,16 +59,33 @@ const AuthHome = ({navigation}) => {
 
     const [data, setData] = useState(dummyData);
     const [originalData, setOriginalData] = useState(dummyData);
-    const [error, setError] = useState('');
-
+    
     const [openConfirm, setOpenConfirm] = useState(false);
     const [toDelete, setToDelete] = useState('');
-
     const [search, setSearch] = useState('');
+    const [error, setError] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
+
+    const [batchNo, setBatchNo] = useState(1);
+    const [batchSize, setBatchSize] = useState(25);
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+    const onRefresh = () => {
+        setCurrentDateTime(new Date());
+        setBatchNo(1);
+        getPostsInBatch();
+    };
 
     const getPostsInBatch = async ()=>{
-        await axios.get(
+        setRefreshing(true);
+        console.log(currentDateTime)
+        await axios.post(
             `${baseUrl}getPostsInBatch/`,
+            {
+                batchNo : batchNo,
+                batchSize : batchSize,
+                datatime : currentDateTime,
+            },
             {
                 headers: {
                 'Content-Type': "application/json",
@@ -80,13 +95,16 @@ const AuthHome = ({navigation}) => {
             }        
         ).then(res=>{
             if (res.data.status==="success"){
-                setData(res.data.earlierProfiles);
-                setOriginalData(res.data.earlierProfiles);
+                // setData(res.data.earlierProfiles);
+                // setOriginalData(res.data.earlierProfiles);
+                console.log(res.data.data);
+                console.log(currentDateTime)
             }else{
                 setError(res.data.message);
                 console.log(res.data.message);
             }
         }).catch(err=>console.log(err));
+        setRefreshing(false);
     }
 
 
@@ -117,7 +135,7 @@ const AuthHome = ({navigation}) => {
     }
 
     useEffect(()=>{
-        // getPostsInBatch();
+        getPostsInBatch();
     },[]);
 
     const searchFilter=(text)=>{
@@ -135,7 +153,13 @@ const AuthHome = ({navigation}) => {
 
                 <SearchBox onChange={searchFilter} value={search}/>
 
-                <ScrollView contentContainerStyle={{...styles.buttonsContainer}}>
+                <ScrollView contentContainerStyle={{...styles.buttonsContainer}}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />}
+                >
                 {data.map((post)=>{
                     return(
                             <SeekerPostCard
