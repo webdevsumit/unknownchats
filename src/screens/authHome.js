@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     ScrollView,
     RefreshControl,
+    Text,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getData } from '../localStorage';
@@ -20,36 +21,36 @@ import SeekerPostCard from '../components/seekerPostCard'
 
 
 const dummyData = [
-    {
-        id:1,
-        name:'Sumit',
-        Image:'https://picsum.photos/200/300',
-        shortDescription : 'Software Engineer | Working Hard | Only One',
-    },
-    {
-        id:2,
-        name:'Sumit',
-        Image:'https://picsum.photos/200/300',
-        shortDescription : 'Software Engineer | Working Hard | Only One',
-    },
-    {
-        id:3,
-        name:'Sumit',
-        Image:'https://picsum.photos/200/300',
-        shortDescription : 'Software Engineer | Working Hard | Only One',
-    },
-    {
-        id:4,
-        name:'Sumit',
-        Image:'https://picsum.photos/200/300',
-        shortDescription : 'Software Engineer | Working Hard | Only One',
-    },
-    {
-        id:5,
-        name:'Sumit',
-        Image:'https://picsum.photos/200/300',
-        shortDescription : 'Software Engineer | Working Hard | Only One',
-    },
+    // {
+    //     id:1,
+    //     name:'Sumit',
+    //     Image:'https://picsum.photos/200/300',
+    //     shortDescription : 'Software Engineer | Working Hard | Only One',
+    // },
+    // {
+    //     id:2,
+    //     name:'Sumit',
+    //     Image:'https://picsum.photos/200/300',
+    //     shortDescription : 'Software Engineer | Working Hard | Only One',
+    // },
+    // {
+    //     id:3,
+    //     name:'Sumit',
+    //     Image:'https://picsum.photos/200/300',
+    //     shortDescription : 'Software Engineer | Working Hard | Only One',
+    // },
+    // {
+    //     id:4,
+    //     name:'Sumit',
+    //     Image:'https://picsum.photos/200/300',
+    //     shortDescription : 'Software Engineer | Working Hard | Only One',
+    // },
+    // {
+    //     id:5,
+    //     name:'Sumit',
+    //     Image:'https://picsum.photos/200/300',
+    //     shortDescription : 'Software Engineer | Working Hard | Only One',
+    // },
 ]
 
 const AuthHome = ({navigation}) => {
@@ -65,20 +66,38 @@ const AuthHome = ({navigation}) => {
     const [search, setSearch] = useState('');
     const [error, setError] = useState('');
     const [refreshing, setRefreshing] = useState(false);
+    const [isLoadMore, setIsLoadMore] = useState(false);
+    const [isWholeDataLoaded, setIsWholeDataLoaded] = useState(false);
 
     const [batchNo, setBatchNo] = useState(1);
     const [batchSize, setBatchSize] = useState(25);
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
     const onRefresh = () => {
+        setRefreshing(true);
         setCurrentDateTime(new Date());
         setBatchNo(1);
         getPostsInBatch();
+        setIsWholeDataLoaded(false);
     };
 
+    const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+        const paddingToBottom = 1;
+        return layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - paddingToBottom;
+    };
+
+    const loadMore = () => {
+        if(!isWholeDataLoaded){
+            setIsLoadMore(true);
+            console.log("batch number => ", batchNo);
+            setBatchNo(prevBatchNo=>prevBatchNo+1);
+            getPostsInBatch();
+        }
+    }
+
     const getPostsInBatch = async ()=>{
-        setRefreshing(true);
-        console.log(currentDateTime)
+        console.log(currentDateTime);
         await axios.post(
             `${baseUrl}getPostsInBatch/`,
             {
@@ -95,16 +114,23 @@ const AuthHome = ({navigation}) => {
             }        
         ).then(res=>{
             if (res.data.status==="success"){
-                // setData(res.data.earlierProfiles);
-                // setOriginalData(res.data.earlierProfiles);
-                console.log(res.data.data);
-                console.log(currentDateTime)
+                if(res.data.data.length===0) setIsWholeDataLoaded(true);
+                else{
+                    if(isLoadMore && !refreshing){
+                        setData(tempData=>tempData.concat(res.data.data));
+                        setOriginalData(tempData=>tempData.concat(res.data.data));
+                    }else{
+                        setData(res.data.data);
+                        setOriginalData(res.data.data);
+                    }
+                }
             }else{
                 setError(res.data.message);
                 console.log(res.data.message);
             }
         }).catch(err=>console.log(err));
         setRefreshing(false);
+        setIsLoadMore(false)
     }
 
 
@@ -159,6 +185,12 @@ const AuthHome = ({navigation}) => {
                           refreshing={refreshing}
                           onRefresh={onRefresh}
                         />}
+                    onScroll={({nativeEvent}) => {
+                        if (isCloseToBottom(nativeEvent)) {
+                            loadMore();
+                        }
+                        }}
+                        scrollEventThrottle={400}
                 >
                 {data.map((post)=>{
                     return(
@@ -168,6 +200,10 @@ const AuthHome = ({navigation}) => {
                             />
                         )
                     })}
+
+                    {isWholeDataLoaded ? <Text>You caught all</Text> : <>
+                    </>}
+                        {isLoadMore ? <Text>Loading...</Text> : <View style={styles.bottomEmptySpace}></View>}
                     {originalData.length===0 && <EmptyFeedsError/>}
                 </ScrollView>
                 <TouchableOpacity style={styles.plusIconContainer} onPress={()=>navigation.navigate('PlatformSelection')}>
@@ -231,5 +267,8 @@ const styles = StyleSheet.create({
         bottom: 20,
         right:20,
         backgroundColor:"rgba(0,0,0,0)"
+    },
+    bottomEmptySpace:{
+        height: 20,
     },
   });

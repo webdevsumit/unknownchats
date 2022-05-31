@@ -14,42 +14,42 @@ const SeekerPostCard = ({ post }) => {
         <View style={styles.feedMainContainer}>
             <View style={styles.feedSubMainContainer}>
                 <View style={styles.feedHeader}>
-                    <Image style={styles.profilePicture} source={{uri:post.Image}}/>
+                    <Image style={styles.profilePicture} source={{uri:post.owner.profilePicture}}/>
                     <View style={styles.profileDescriptionContainer}>
-                        <Text style={styles.profileName}>{post.name}</Text>
-                        <Text style={styles.profileDescription}>{post.shortDescription}</Text>
+                        <Text style={styles.profileName}>{post.owner.user.username}</Text>
+                        <Text style={styles.profileDescription}>{post.owner.shortDescription}</Text>
                     </View>
                 </View>
 
                 <View style={styles.horizontalLine}></View>
 
-                <View style={styles.posrMainDescriptionContainer}>
-                    <Text style={styles.posrMainDescription}>
-                        If you want to achieve this behavior, see the guide for screen options 
+                <View style={styles.postMainDescriptionContainer}>
+                    <Text style={styles.postMainDescription}>
+                        {/* If you want to achieve this behavior, see the guide for screen options 
                         with nested navigators. this could be useful if you are rendering a tab navigator 
                         inside a stack navigator and want to show the title of the active screen inside the tab 
-                        navigator in the header of the stack navigator.
-                        {post.name}
+                        navigator in the header of the stack navigator. */}
+                        {post.postDescription}
                     </Text>
                 </View>
 
                 <View style={styles.horizontalLine}></View>
                 <View style={styles.feedFooter}>
-                    <TouchableOpacity onPress={()=>{console.log(post.Image)}}>
-                        <Icon name="thumb-up" size={30} color="#000" />
-                        <Text style={styles.feedCounts}>100</Text>
+                    <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
+                        <Icon name="thumb-up" size={30} color={post.likedByUser?"#ff0000":"#000" }/>
+                        <Text style={styles.feedCounts}>{post.likes}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>{console.log(post.Image)}}>
+                    <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
                         <Icon name="chat" size={30} color="#000" />
-                        <Text style={styles.feedCounts}>100</Text>
+                        <Text style={styles.feedCounts}>{post.messageCounts}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>{console.log(post.Image)}}>
-                        <Icon name="content-save" size={30} color="#000" />
-                        <Text style={styles.feedCounts}>100</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>{console.log(post.Image)}}>
+                    <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
                         <Icon name="delete" size={30} color="#000" />
-                        <Text style={styles.feedCounts}>100</Text>
+                        <Text style={styles.feedCounts}>{post.rejections}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
+                        <Icon name="content-save" size={30} color="#000" />
+                        <Text style={styles.feedCounts}>{post.savesCounts}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -101,10 +101,10 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         // textDecorationLine : 'underline'
     },
-    posrMainDescriptionContainer : {
+    postMainDescriptionContainer : {
         padding: 10,
     },
-    posrMainDescription : {
+    postMainDescription : {
         fontFamily: 'serif',
     },
     feedFooter: {
