@@ -15,7 +15,7 @@ const SearchBox = ({ onChange, value }) => {
                         style={styles.searchTextInput}
                         value={value}
                         onChange={({ nativeEvent: { eventCount, target, text} })=>{onChange(text)}}
-                        placeholder="Search"
+                        placeholder="Search from loaded posts"
                         // autoComplete="email"
                         // onSubmitEditing={()=>console.log("submit")}
                     />

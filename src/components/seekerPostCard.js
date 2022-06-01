@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const SeekerPostCard = ({ post }) => {
+const SeekerPostCard = ({ post, onLikeClick }) => {
 
     return(
         <View style={styles.feedMainContainer}>
@@ -25,30 +25,26 @@ const SeekerPostCard = ({ post }) => {
 
                 <View style={styles.postMainDescriptionContainer}>
                     <Text style={styles.postMainDescription}>
-                        {/* If you want to achieve this behavior, see the guide for screen options 
-                        with nested navigators. this could be useful if you are rendering a tab navigator 
-                        inside a stack navigator and want to show the title of the active screen inside the tab 
-                        navigator in the header of the stack navigator. */}
                         {post.postDescription}
                     </Text>
                 </View>
 
                 <View style={styles.horizontalLine}></View>
                 <View style={styles.feedFooter}>
-                    <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
-                        <Icon name="thumb-up" size={30} color={post.likedByUser?"#ff0000":"#000" }/>
+                    <TouchableOpacity onPress={()=>{onLikeClick( post.id, post.likedByUser?"dislike":"like")}}>
+                        <Icon name="thumb-up" size={30} color={post.likedByUser?"#ff0000":"#ddd" }/>
                         <Text style={styles.feedCounts}>{post.likes}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
-                        <Icon name="chat" size={30} color="#000" />
+                        <Icon name="chat" size={30} color={post.messagedBy?"#ff0000":"#ddd" } />
                         <Text style={styles.feedCounts}>{post.messageCounts}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
-                        <Icon name="delete" size={30} color="#000" />
+                        <Icon name="delete" size={30} color={post.rejectedBy?"#ff0000":"#ddd" } />
                         <Text style={styles.feedCounts}>{post.rejections}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
-                        <Icon name="content-save" size={30} color="#000" />
+                        <Icon name="content-save" size={30} color={post.savedBy?"#ff0000":"#ddd" } />
                         <Text style={styles.feedCounts}>{post.savesCounts}</Text>
                     </TouchableOpacity>
                 </View>
