@@ -32,19 +32,19 @@ const SeekerPostCard = ({ post, onLikeClick }) => {
                 <View style={styles.horizontalLine}></View>
                 <View style={styles.feedFooter}>
                     <TouchableOpacity onPress={()=>{onLikeClick( post.id, post.likedByUser?"dislike":"like")}}>
-                        <Icon name="thumb-up" size={30} color={post.likedByUser?"#ff0000":"#ddd" }/>
+                        <Icon name="thumb-up" size={30} color={post.likedByUser?"#3279a8":"#ddd" }/>
                         <Text style={styles.feedCounts}>{post.likes}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
-                        <Icon name="chat" size={30} color={post.messagedBy?"#ff0000":"#ddd" } />
+                        <Icon name="chat" size={30} color={post.messagedBy?"#3279a8":"#ddd" } />
                         <Text style={styles.feedCounts}>{post.messageCounts}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
-                        <Icon name="delete" size={30} color={post.rejectedBy?"#ff0000":"#ddd" } />
+                        <Icon name="delete" size={30} color={post.rejectedBy?"#3279a8":"#ddd" } />
                         <Text style={styles.feedCounts}>{post.rejections}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{console.log(post.tags)}}>
-                        <Icon name="content-save" size={30} color={post.savedBy?"#ff0000":"#ddd" } />
+                        <Icon name="content-save" size={30} color={post.savedBy?"#3279a8":"#ddd" } />
                         <Text style={styles.feedCounts}>{post.savesCounts}</Text>
                     </TouchableOpacity>
                 </View>

@@ -3,29 +3,29 @@ import axios from "axios";
 import { getData } from "./localStorage";
 const baseUrl = 'http://backend.unknownchats.com/';
 
-export const getPostsInBatchApi = async ({ batchNo = 1, batchSize = 25, currentDateTime = new Date()}) => {
+export async function getPostsInBatchApi({ batchNo = 1, batchSize = 25, currentDateTime = new Date() }) {
     return await new Promise(async (onResolve, onReject) => {
         await axios.post(
             `${baseUrl}getPostsInBatch/`,
             {
-                batchNo : batchNo,
-                batchSize : batchSize,
-                datatime : currentDateTime,
+                batchNo: batchNo,
+                batchSize: batchSize,
+                datatime: currentDateTime,
             },
             {
                 headers: {
-                'Content-Type': "application/json",
-                'Accept': "application/json",
-                'Authorization': `Token ${await getData('token')}` 
-                }  
-            }        
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
         )
-        .then(res=>onResolve(res))
-        .catch(err=>onReject(err));
-    })
-};
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
 
-export const likePostByUserIdApi = async ({id, type}) => {
+export async function likePostByUserIdApi({ id, type }) {
     return await new Promise(async (onResolve, onReject) => {
         await axios.post(
             `${baseUrl}likePostByUserId/`,
@@ -35,13 +35,13 @@ export const likePostByUserIdApi = async ({id, type}) => {
             },
             {
                 headers: {
-                'Content-Type': "application/json",
-                'Accept': "application/json",
-                'Authorization': `Token ${await getData('token')}` 
-                }  
-            }        
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
         )
-        .then(res=>onResolve(res))
-        .catch(err=>onReject(err));
-    })
-};
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}

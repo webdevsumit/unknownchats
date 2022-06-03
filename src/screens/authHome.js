@@ -82,20 +82,20 @@ const AuthHome = ({navigation}) => {
     const onLikeClick = async (id, type) => {
         await likePostByUserIdApi({id, type}).then(res=>{
             if(res.data.status==='success'){
-                setData(tempData=>{
+                let tempData = !!data? data : [];
+                setData(
                     tempData.map(post=>{
                         if(post.id===id){
                             return {
                                 ...post,
-                                likes : type==='like'?post.likes+1:post.likes-1,
-                                likeByUser: type==='like'
+                                likes : type==='like'? post.likes+1 : post.likes-1,
+                                likedByUser: type==='like'? true : false
                             };
                         }else return post;
                     })
-                });
+                );
             }
         }).catch(err=>console.log(err));
-        setOpenConfirm(false);
     }
 
     useEffect(()=>{
@@ -129,7 +129,7 @@ const AuthHome = ({navigation}) => {
                         }}
                         scrollEventThrottle={400}
                 >
-                {data.filter(post=>{
+                {data?.filter(post=>{
                     if(!!search){
                         return (
                                 (!!post.postDescription && post.postDescription?.toUpperCase().indexOf(search.toUpperCase())!==-1) || 
@@ -153,7 +153,7 @@ const AuthHome = ({navigation}) => {
                     {isWholeDataLoaded ? <Text>You caught all</Text> : <>
                     </>}
                         {isLoadMore ? <Text>Loading...</Text> : <View style={styles.bottomEmptySpace}></View>}
-                    {data.length===0 && <EmptyFeedsError/>}
+                    {data?.length===0 && <EmptyFeedsError/>}
                 </ScrollView>
                 <TouchableOpacity style={styles.plusIconContainer} onPress={()=>navigation.navigate('PlatformSelection')}>
                         <Icon name="plus-circle" size={50} color="#000" />
