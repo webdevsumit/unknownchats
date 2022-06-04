@@ -22,7 +22,7 @@ export default function TabNavigator() {
             } else if (route.name === 'Experts') {
                 iconName = focused ? 'account-tie' : 'account-tie';
             }else if (route.name === 'Messages') {
-                iconName = focused ? 'chat' : 'chat';
+                iconName = focused ? 'message-reply' : 'message-badge';
             }else if (route.name === 'Account') {
                 iconName = focused ? 'account-cog' : 'account-cog';
             }
@@ -31,7 +31,7 @@ export default function TabNavigator() {
             return <Icon name={iconName} size={size} color={color} />;
             },
             tabBarActiveTintColor: 'black',
-            tabBarInactiveTintColor: 'gray',
+            tabBarInactiveTintColor: '#aaa',
         })}
       >
         <Tab.Screen name="Home" component={AuthHome}/>

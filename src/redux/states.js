@@ -2,7 +2,7 @@ import { createSlice} from '@reduxjs/toolkit'
 
 const initialState= {
   isLogin: false,
-  fakeProfileIdToOpen: 1,
+  messageBoxIdToOpen: 1,
   username:'',
   baseUrl : 'http://backend.unknownchats.com/',
 }
@@ -14,8 +14,8 @@ export const stateSlice = createSlice({
     setIsLogin: (state, action) => {
       state.isLogin = action.payload
     },
-    setFakeProfileIdToOpen: (state, action) => {
-      state.fakeProfileIdToOpen = action.payload
+    setMessageBoxIdToOpenToOpen: (state, action) => {
+      state.messageBoxIdToOpen = action.payload
     },
     setUrl: (state, action) => {
       state.url = action.payload
@@ -26,6 +26,6 @@ export const stateSlice = createSlice({
   },
 })
 
-export const {setIsLogin, setFakeProfileIdToOpen, setUrl, setUsername } = stateSlice.actions;
+export const {setIsLogin, setMessageBoxIdToOpenToOpen, setUrl, setUsername } = stateSlice.actions;
 
 export default stateSlice.reducer;

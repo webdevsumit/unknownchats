@@ -12,15 +12,22 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import EmptyFeedsError from '../components/emptyFeedsError'
 import SearchBox from '../components/serchBox'
 import SeekerPostCard from '../components/seekerPostCard'
+import { useDispatch } from 'react-redux';
+import { setMessageBoxIdToOpenToOpen } from '../redux/states';
 
 import {
     getPostsInBatchApi,
-    likePostByUserIdApi
+    likePostByUserIdApi,
+    messageCountToPostByUserIdApi,
+    rejectionCountToPostByUserIdApi,
+    savePostByUserIdApi,
 } from '../apis';
 
 
-const AuthHome = ({navigation}) => {
+const AuthHome = ({ navigation }) => {
     
+    const dispatch = useDispatch();
+
     const [data, setData] = useState([]);
     const [search, setSearch] = useState('');
     const [refreshing, setRefreshing] = useState(false);
@@ -97,6 +104,78 @@ const AuthHome = ({navigation}) => {
             }
         }).catch(err=>console.log(err));
     }
+    const onSaveClick = async (id, type) => {
+        await savePostByUserIdApi({id, type}).then(res=>{
+            if(res.data.status==='success'){
+                let tempData = !!data? data : [];
+                setData(
+                    tempData.map(post=>{
+                        if(post.id===id){
+                            return {
+                                ...post,
+                                savesCounts : type==='save'? post.savesCounts+1 : post.savesCounts-1,
+                                savedByUser: type==='save'? true : false
+                            };
+                        }else return post;
+                    })
+                );
+            }
+        }).catch(err=>console.log(err));
+    }
+
+    const onRejectClick = async (id) => {
+        await rejectionCountToPostByUserIdApi({id}).then(res=>{
+            if(res.data.status==='success'){
+                let tempData = !!data? data : [];
+                setData(
+                    tempData.map(post=>{
+                        if(post.id===id){
+                            return {
+                                ...post,
+                                rejections : post.rejections+1,
+                                rejectedByUser: true,
+                            };
+                        }else return post;
+                    })
+                );
+            }
+        }).catch(err=>console.log(err));
+    }
+    
+    const onMessageClick = async (id) => {
+        await messageCountToPostByUserIdApi({id}).then(res=>{
+            if(res.data.status==='success'){
+                let tempData = !!data? data : [];
+                setData(
+                    tempData.map(post=>{
+                        if(post.id===id){
+                            return {
+                                ...post,
+                                messageCounts : res.data.messageCounts,
+                                messagedByUser: true,
+                            };
+                        }else return post;
+                    })
+                );
+                dispatch(setMessageBoxIdToOpenToOpen(res.data.messageBoxId));
+                navigation.navigate('Messages');
+            }
+        });
+    }
+
+    const setRepliesCount = (id, repliesCount) => {
+        let tempData = !!data? data : [];
+        setData(
+            tempData.map(post=>{
+                if(post.id===id){
+                    return {
+                        ...post,
+                        repliesCount : repliesCount,
+                    };
+                }else return post;
+            })
+        );
+    }
 
     useEffect(()=>{
         getPostsInBatch();
@@ -132,20 +211,25 @@ const AuthHome = ({navigation}) => {
                 {data?.filter(post=>{
                     if(!!search){
                         return (
-                                (!!post.postDescription && post.postDescription?.toUpperCase().indexOf(search.toUpperCase())!==-1) || 
+                                ((!!post.postDescription && post.postDescription?.toUpperCase().indexOf(search.toUpperCase())!==-1) || 
                                 (!!post.owner.shortDescription && post.owner.shortDescription?.toUpperCase().indexOf(search.toUpperCase())!==-1) || 
                                 post.owner.user.username.toUpperCase().indexOf(search.toUpperCase())!==-1 ||
-                                post.tags.filter(tag=>(!!tag.tagName && tag.tagName?.toUpperCase().indexOf(search.toUpperCase())!==-1)).length!==0
+                                post.tags.filter(tag=>(!!tag.tagName && tag.tagName?.toUpperCase().indexOf(search.toUpperCase())!==-1)).length!==0) && 
+                                post.rejectedByUser===false
                             );
                     }else{
-                        return true;
+                        return post.rejectedByUser===false;
                     }
                 }).map((post)=>{
                     return(
                             <SeekerPostCard
                                 key={post.id}
                                 post={post}
+                                onRejectClick={onRejectClick}
                                 onLikeClick={onLikeClick}
+                                onMessageClick={onMessageClick}
+                                onSaveClick={onSaveClick}
+                                setRepliesCount={setRepliesCount}
                             />
                         )
                     })}

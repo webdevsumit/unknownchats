@@ -24,11 +24,68 @@ export async function getPostsInBatchApi({ batchNo = 1, batchSize = 25, currentD
             .catch(err => onReject(err));
     });
 }
-
 export async function likePostByUserIdApi({ id, type }) {
     return await new Promise(async (onResolve, onReject) => {
         await axios.post(
             `${baseUrl}likePostByUserId/`,
+            {
+                id: id,
+                type: type
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function messageCountToPostByUserIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}messageCountToPostByUserId/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function rejectionCountToPostByUserIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}rejectionCountToPostByUserId/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function savePostByUserIdApi({ id, type }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}savePostByUserId/`,
             {
                 id: id,
                 type: type
