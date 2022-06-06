@@ -102,3 +102,42 @@ export async function savePostByUserIdApi({ id, type }) {
             .catch(err => onReject(err));
     });
 }
+export async function getRepliesByPostIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}getRepliesByPostId/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function addNewReplyToPostApi({ id, reply }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}addNewReplyToPost/`,
+            {
+                id: id,
+                reply: reply,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
