@@ -7,8 +7,17 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { DateDifferenceWithCurrentDate } from '../commons';
+import { deleteReplyByIdApi } from '../apis';
 
-const PostComment = ({ comment }) => {
+const PostComment = ({ comment, handleRefreshComments }) => {
+
+    const handleDeleteReply = async () => {
+        await deleteReplyByIdApi({id:comment.id}).then(res=>{
+            if(res.data.status==='success'){
+                handleRefreshComments();
+            }
+        });
+    }
 
     return(
         <View style={styles.commentBoxContainer}>
@@ -19,9 +28,11 @@ const PostComment = ({ comment }) => {
                         <Text style={{...styles.comment, fontSize: 10 }}>{DateDifferenceWithCurrentDate(comment.datetime)}</Text>
                     </View>
                     <View>
-                        <TouchableOpacity onPress={()=>{setMenuOpen(true)}}>
-                            <Icon name="delete" size={15} color="#888" />
-                        </TouchableOpacity>
+                        {comment.addedByUser && <>
+                            <TouchableOpacity onPress={handleDeleteReply}>
+                                <Icon name="delete" size={15} color="#888" />
+                            </TouchableOpacity>
+                        </>}
                     </View>
                 </View>
                 <Text style={{...styles.comment, width: "100%",}}>{comment.reply}</Text>

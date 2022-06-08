@@ -16,7 +16,7 @@ import {
 } from './../apis';
 import PostComment from './postComment';
 
-const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessageClick, setRepliesCount }) => {
+const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessageClick, setRepliesCount, handleDeletePost }) => {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [repliesOpen, setRepliesOpen] = useState(false);
@@ -29,6 +29,7 @@ const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessa
             if(res.data.status==='success'){
                 setRepliesOpen(true);
                 setRepliesData(res.data.data);
+                setRepliesCount(id, res.data.repliesCount);
             }
         });
     }
@@ -42,6 +43,7 @@ const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessa
         await addNewReplyToPostApi({id : post.id, reply : newReply}).then(res=>{
             if(res.data.status==='success'){
                 setNewReply('');
+                onReplyRefresh();
             }
         });
     }
@@ -73,6 +75,11 @@ const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessa
                                     <TouchableOpacity onPress={()=>{onRejectClick(post.id); setMenuOpen(false);}}>
                                         <Text style={styles.menuOption}>Not Interested - ({post.rejections})</Text>
                                     </TouchableOpacity>
+
+                                    {post.addedByUser && 
+                                    <TouchableOpacity onPress={()=>{handleDeletePost(post.id); setMenuOpen(false);}}>
+                                        <Text style={{...styles.menuOption, color: 'red'}}>Delete</Text>
+                                    </TouchableOpacity>}
 
                                 </View>
                             </View>
@@ -131,7 +138,7 @@ const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessa
 
                         <View style={styles.repliesBlock}>
                             <ScrollView nestedScrollEnabled={true} >
-                                {repliesData.map(reply=><PostComment key={reply.id} comment={reply} />)}
+                                {repliesData.map(reply=><PostComment key={reply.id} comment={reply} handleRefreshComments={onReplyRefresh} />)}
                             </ScrollView>
                         </View>
 

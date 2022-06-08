@@ -21,6 +21,7 @@ import {
     messageCountToPostByUserIdApi,
     rejectionCountToPostByUserIdApi,
     savePostByUserIdApi,
+    deletePostByIdApi,
 } from '../apis';
 
 
@@ -141,6 +142,14 @@ const AuthHome = ({ navigation }) => {
             }
         }).catch(err=>console.log(err));
     }
+    const handleDeletePost = async (id) => {
+        await deletePostByIdApi({id}).then(res=>{
+            if(res.data.status==='success'){
+                let tempData = !!data? data : [];
+                setData(tempData.map(post=>post.id!==id));
+            }
+        }).catch(err=>console.log(err));
+    }
     
     const onMessageClick = async (id) => {
         await messageCountToPostByUserIdApi({id}).then(res=>{
@@ -226,6 +235,7 @@ const AuthHome = ({ navigation }) => {
                                 key={post.id}
                                 post={post}
                                 onRejectClick={onRejectClick}
+                                handleDeletePost={handleDeletePost}
                                 onLikeClick={onLikeClick}
                                 onMessageClick={onMessageClick}
                                 onSaveClick={onSaveClick}

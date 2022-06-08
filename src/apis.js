@@ -136,6 +136,44 @@ export async function addNewReplyToPostApi({ id, reply }) {
                     'Authorization': `Token ${await getData('token')}`
                 }
             }
+            )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+        });
+}
+export async function deleteReplyByIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}deleteReplyById/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function deletePostByIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}deletePostById/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
         )
             .then(res => onResolve(res))
             .catch(err => onReject(err));
