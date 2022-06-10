@@ -12,8 +12,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import EmptyFeedsError from '../components/emptyFeedsError'
 import SearchBox from '../components/serchBox'
 import SeekerPostCard from '../components/seekerPostCard'
+import AddNewPost from '../components/addNewPost'
 import { useDispatch } from 'react-redux';
 import { setMessageBoxIdToOpenToOpen } from '../redux/states';
+
 
 import {
     getPostsInBatchApi,
@@ -39,6 +41,7 @@ const AuthHome = ({ navigation }) => {
     const [batchNo, setBatchNo] = useState(1);
     const [batchSize, setBatchSize] = useState(25);
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const [addingNewPost, setAddingNewPost] = useState(false);
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -194,12 +197,16 @@ const AuthHome = ({ navigation }) => {
         setSearch(text);
     }
 
+    const handleAddNewPost=(text)=>{
+        console.log(text);
+        setAddingNewPost(false);
+    }
+
     return(
         <View style={styles.container}>
-            {/* {openConfirm && <ConfirmDelete
-                onCancel={()=>setOpenConfirm(false)}
-                onDelete={deleteFakeProfile}
-            />} */}
+            {addingNewPost && <AddNewPost
+                handleSubmit={handleAddNewPost}
+            />}
             <View style={{flex:1, width: "100%"}}>
 
                 <SearchBox onChange={searchFilter} value={search}/>
@@ -249,7 +256,7 @@ const AuthHome = ({ navigation }) => {
                         {isLoadMore ? <Text>Loading...</Text> : <View style={styles.bottomEmptySpace}></View>}
                     {data?.length===0 && <EmptyFeedsError/>}
                 </ScrollView>
-                <TouchableOpacity style={styles.plusIconContainer} onPress={()=>navigation.navigate('PlatformSelection')}>
+                <TouchableOpacity style={styles.plusIconContainer} onPress={()=>setAddingNewPost(true)}>
                         <Icon name="plus-circle" size={50} color="#000" />
                 </TouchableOpacity>
             </View>
