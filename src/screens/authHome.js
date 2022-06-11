@@ -24,6 +24,7 @@ import {
     rejectionCountToPostByUserIdApi,
     savePostByUserIdApi,
     deletePostByIdApi,
+    addNewPostApi,
 } from '../apis';
 
 
@@ -197,8 +198,13 @@ const AuthHome = ({ navigation }) => {
         setSearch(text);
     }
 
-    const handleAddNewPost=(text)=>{
-        console.log(text);
+    const handleAddNewPost = async (postText, tagList)=>{
+        await addNewPostApi({postText, tagList}).then(res=>{
+            if(res.data.status==='success'){
+                let tempData = !!data? data : [];
+                setData([...tempData, res.data.post]);
+            }
+        }).catch(err=>console.log(err));
         setAddingNewPost(false);
     }
 
@@ -206,6 +212,7 @@ const AuthHome = ({ navigation }) => {
         <View style={styles.container}>
             {addingNewPost && <AddNewPost
                 handleSubmit={handleAddNewPost}
+                cancelPost={()=>setAddingNewPost(false)}
             />}
             <View style={{flex:1, width: "100%"}}>
 

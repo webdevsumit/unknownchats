@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
     StyleSheet,
@@ -8,13 +8,43 @@ import {
     ScrollView,
 } from 'react-native';
 
+import { getMyPopularTagsApi } from '../apis';
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const AddNewPost = ({ handleSubmit }) => {
+const AddNewPost = ({ handleSubmit, cancelPost }) => {
 
     const [postText, setPostText] = useState('');
     const [tagList, setTagList] = useState(["ADD", "NEW", "ONE MORE", "ONE MORE", "ONE MORE", "ONE MORE"]);
     const [newTagText, setNewTagText] = useState("");
+
+    var tagInputField = useRef(null);
+
+    const fetchMyOwnTags = async () => {
+        await getMyPopularTagsApi().then(res=>{
+            if(res.data.status==='success'){
+                setTagList(res.data.data);
+            }
+        }).catch(err=>console.log(err));
+    }
+
+    useEffect(()=>{
+        fetchMyOwnTags();
+    },[])
+
+    const handleRemoveTag = (removingTagIndex) => {
+        setTagList(tagList.filter((tag, index)=>index!==removingTagIndex))
+    }
+
+    const handleNewTag = () => {
+        if(tagList.filter((tag)=>tag===newTagText.toUpperCase()).length===0){
+            setTagList([...tagList, newTagText.toUpperCase()]);
+        }
+        setNewTagText('');
+        setTimeout(()=>{
+            tagInputField.current.focus();
+        },0);
+    }
 
     return (
         <View style={styles.mainContainer}>
@@ -37,7 +67,11 @@ const AddNewPost = ({ handleSubmit }) => {
                         <View style={styles.addedTags}>
                             {tagList.map((tag, index)=><View key={index} style={styles.singleTag}>
                                 <Text style={styles.singleTagText}>{tag}</Text>
-                                <Icon style={{ marginLeft: 4 }} name="delete-circle-outline" size={15} color="#aaa" />
+
+                                <TouchableOpacity onPress={()=>handleRemoveTag(index)}>
+                                    <Icon style={{ marginLeft: 4 }} name="delete-circle-outline" size={15} color="#aaa" />
+                                </TouchableOpacity>
+
                             </View>)}
                         </View>
                     </ScrollView>
@@ -45,18 +79,19 @@ const AddNewPost = ({ handleSubmit }) => {
                         style={styles.tagInput}
                         value={newTagText}
                         onChange={({ nativeEvent: { eventCount, target, text } }) => { setNewTagText(text) }}
-                        placeholder="Add TAGS for good reach...(min. 5)"
+                        placeholder="Add TAGS for good reach...(min 3, max 10)"
                         autoCorrect={true}
                         dataDetectorTypes="all"
                         returnKeyType="send"
-                        onSubmitEditing={handleSubmit}
+                        ref={tagInputField}
+                        onSubmitEditing={handleNewTag}
                     />
                 </View>
                 <View style={styles.buttonsContainer}>
-                    <TouchableOpacity onPress={handleSubmit}>
+                    <TouchableOpacity onPress={cancelPost}>
                         <Text style={styles.cancelButtonText}>CANCEL</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSubmit}>
+                    <TouchableOpacity onPress={()=>handleSubmit(postText, tagList)}>
                         <Text style={styles.buttonText}>POST NOW</Text>
                     </TouchableOpacity>
                 </View>
