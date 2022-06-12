@@ -6,31 +6,55 @@ import {
     Text,
     TextInput,
     ScrollView,
+    FlatList,
+    VariantsBox,
 } from 'react-native';
 
-import { getMyPopularTagsApi } from '../apis';
+import { getMyPopularTagsApi, getTagsBySearchKeyApi } from '../apis';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const AddNewPost = ({ handleSubmit, cancelPost }) => {
 
     const [postText, setPostText] = useState('');
-    const [tagList, setTagList] = useState(["ADD", "NEW", "ONE MORE", "ONE MORE", "ONE MORE", "ONE MORE"]);
+    const [tagList, setTagList] = useState([]);
     const [newTagText, setNewTagText] = useState("");
+    const [suggestTagList, setSuggestTagList] = useState([
+        {"id":1, "tagName":"add more", "useCount": 3}, 
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+        {"id":2, "tagName":"add one more", "useCount": 4},
+    ]);
 
     var tagInputField = useRef(null);
+
 
     const fetchMyOwnTags = async () => {
         await getMyPopularTagsApi().then(res=>{
             if(res.data.status==='success'){
-                setTagList(res.data.data);
+                setTagList(res.data.data.map(tag=>tag.tagName));
             }
         }).catch(err=>console.log(err));
     }
 
     useEffect(()=>{
         fetchMyOwnTags();
-    },[])
+    },[]);
+
+    // WILL BE IMPLEMENTED LATER TO REMOVE THE SUGGESTION LIST..
+    // useEffect(()=>{
+    //     if(!tagInputField?.current?.focus()){
+    //         setSuggestTagList([]);
+    //     }
+    // },[tagInputField])
+    // ...
 
     const handleRemoveTag = (removingTagIndex) => {
         setTagList(tagList.filter((tag, index)=>index!==removingTagIndex))
@@ -41,9 +65,31 @@ const AddNewPost = ({ handleSubmit, cancelPost }) => {
             setTagList([...tagList, newTagText.toUpperCase()]);
         }
         setNewTagText('');
+        setSuggestTagList([]);
         setTimeout(()=>{
             tagInputField.current.focus();
         },0);
+    }
+
+    const handleTagFitering = async (searchKey) => {
+        setNewTagText(searchKey);
+        if(!!searchKey){
+            await getTagsBySearchKeyApi({searchKey:searchKey}).then(res=>{
+                if(res.data.status==='success'){
+                    setSuggestTagList(res.data.data.filter(tag=>tag.tagName!==searchKey));
+                }
+            }).catch(err=>console.log(err));
+        }else{
+            setSuggestTagList([]);
+        }
+    }
+
+    const handleTagSelectionFromList = (tagName) => {
+        if(tagList.filter((tag)=>tag===tagName.toUpperCase()).length===0){
+            setTagList([...tagList, tagName.toUpperCase()]);
+        }
+        setNewTagText('');
+        setSuggestTagList([]);
     }
 
     return (
@@ -78,13 +124,33 @@ const AddNewPost = ({ handleSubmit, cancelPost }) => {
                     <TextInput
                         style={styles.tagInput}
                         value={newTagText}
-                        onChange={({ nativeEvent: { eventCount, target, text } }) => { setNewTagText(text) }}
+                        onChange={({ nativeEvent: { eventCount, target, text } }) => { handleTagFitering(text) }}
                         placeholder="Add TAGS for good reach...(min 3, max 10)"
                         autoCorrect={true}
                         dataDetectorTypes="all"
                         returnKeyType="send"
                         ref={tagInputField}
                         onSubmitEditing={handleNewTag}
+                    />
+                    <FlatList
+                        style={styles.tagInputFlatList}
+                        data={suggestTagList}
+                        renderItem={({item, index}) => (
+                            <TouchableOpacity
+                                key={index}
+                                onPress={() => handleTagSelectionFromList(item?.tagName)}>
+                                <View
+                                    style={styles.tagInputFlatListItem}
+                                >
+                                    <Text style={styles.singleTagText}>
+                                    {item?.tagName || ''}
+                                    {" "}
+                                    ({item?.useCount})
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                        keyExtractor={item => item?.tagName}
                     />
                 </View>
                 <View style={styles.buttonsContainer}>
@@ -157,6 +223,28 @@ const styles = StyleSheet.create({
         borderTopColor: 'grey',
         borderTopWidth: 1,
     },
+    tagInputFlatList: {
+        width: '100%',
+        minHeight: 30,
+        padding: 10,
+        margin: 0,
+        position:'absolute',
+        bottom: 30,
+        zIndex: 3,
+        backgroundColor: '#eee',
+        borderRadius: 5,
+        borderColor: 'grey',
+        borderWidth: 1,
+    },
+    tagInputFlatListItem: {
+        flexDirection: 'row',
+        backgroundColor: '#00aa00',
+        height: 25,
+        padding: 5,
+        margin: 2,
+        borderRadius: 2,
+        zIndex: 3,
+    },
     singleTag: {
         flexDirection: 'row',
         backgroundColor: '#555',
@@ -168,7 +256,7 @@ const styles = StyleSheet.create({
     singleTagText: {
         fontSize: 10,
         fontFamily: 'serif',
-        color: '#fff'
+        color: '#fff',
     },
     buttonsContainer: {
         width: '100%',

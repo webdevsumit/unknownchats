@@ -199,6 +199,25 @@ export async function addNewPostApi({ postText, tagList }) {
             .catch(err => onReject(err));
     });
 }
+export async function getTagsBySearchKeyApi({ searchKey }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}getTagsBySearchKey/`,
+            {
+                searchKey: searchKey,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
 export async function getMyPopularTagsApi() {
     return await new Promise(async (onResolve, onReject) => {
         await axios.get(
