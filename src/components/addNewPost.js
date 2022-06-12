@@ -19,19 +19,7 @@ const AddNewPost = ({ handleSubmit, cancelPost }) => {
     const [postText, setPostText] = useState('');
     const [tagList, setTagList] = useState([]);
     const [newTagText, setNewTagText] = useState("");
-    const [suggestTagList, setSuggestTagList] = useState([
-        {"id":1, "tagName":"add more", "useCount": 3}, 
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-        {"id":2, "tagName":"add one more", "useCount": 4},
-    ]);
+    const [suggestTagList, setSuggestTagList] = useState([]);
 
     var tagInputField = useRef(null);
 
@@ -132,26 +120,28 @@ const AddNewPost = ({ handleSubmit, cancelPost }) => {
                         ref={tagInputField}
                         onSubmitEditing={handleNewTag}
                     />
-                    <FlatList
-                        style={styles.tagInputFlatList}
-                        data={suggestTagList}
-                        renderItem={({item, index}) => (
-                            <TouchableOpacity
-                                key={index}
-                                onPress={() => handleTagSelectionFromList(item?.tagName)}>
-                                <View
-                                    style={styles.tagInputFlatListItem}
-                                >
-                                    <Text style={styles.singleTagText}>
-                                    {item?.tagName || ''}
-                                    {" "}
-                                    ({item?.useCount})
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                        keyExtractor={item => item?.tagName}
-                    />
+                    {suggestTagList.length>0 && <>
+                        <FlatList
+                            style={styles.tagInputFlatList}
+                            data={suggestTagList}
+                            renderItem={({item, index}) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => handleTagSelectionFromList(item?.tagName)}>
+                                    <View
+                                        style={styles.tagInputFlatListItem}
+                                    >
+                                        <Text style={styles.singleTagText}>
+                                        {item?.tagName || ''}
+                                        {" "}
+                                        ({item?.useCount})
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                            keyExtractor={item => item?.tagName}
+                        />
+                    </>}
                 </View>
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity onPress={cancelPost}>
