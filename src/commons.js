@@ -17,3 +17,10 @@ export function DateDifferenceWithCurrentDate(earlyDate){
 
     return diff.toFixed(2)+" "+type;
 }
+
+
+export function truncateTheText(text, to=45){
+    if (!text) return '';
+    if (text.length>to) return text.toString().substring(0, to)+'...';
+    return text;
+}

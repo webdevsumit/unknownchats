@@ -9,7 +9,7 @@ import {
     TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { DateDifferenceWithCurrentDate } from '../commons';
+import { DateDifferenceWithCurrentDate, truncateTheText } from '../commons';
 import {
     getRepliesByPostIdApi,
     addNewReplyToPostApi,
@@ -23,6 +23,7 @@ const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessa
     const [repliesData, setRepliesData] = useState([]);
     const [replyRefreshing, setRepliesRefreshing] = useState(false);
     const [newReply, setNewReply] = useState('');
+    const [fullText, setFullText] = useState(false);
     
     const onReplyClick = async (id) => {
         await getRepliesByPostIdApi({id}).then(res=>{
@@ -89,27 +90,43 @@ const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessa
                 <View style={styles.horizontalLine}></View>
 
                 <View style={styles.postMainDescriptionContainer}>
-                    <Text style={styles.postMainDescription}>
-                        {post.postDescription}
-                    </Text>
+                    {fullText?<>
+                        <Text style={styles.postMainDescription}>
+                            {post.postDescription}
+                        </Text>
+                        <TouchableOpacity onPress={()=>{setFullText(false)}}>
+                            <Text style={{...styles.postMainDescription, color: '#3279a8'}}>
+                                less
+                            </Text>
+                        </TouchableOpacity>
+                    </>:<>
+                        <Text style={styles.postMainDescription}>
+                            {truncateTheText(post.postDescription, 200)}
+                        </Text>
+                        <TouchableOpacity onPress={()=>{setFullText(true)}}>
+                            <Text style={{...styles.postMainDescription, color: '#3279a8'}}>
+                                more
+                            </Text>
+                        </TouchableOpacity>
+                    </>}
                 </View>
 
                 <View style={styles.horizontalLine}></View>
                 <View style={styles.feedFooter}>
                     <TouchableOpacity onPress={()=>{onLikeClick( post.id, post.likedByUser?"dislike":"like")}}>
-                        <Icon name="thumb-up" size={30} color={post.likedByUser?"#3279a8":"#ddd" }/>
+                        <Icon name="heart" size={25} color={post.likedByUser?"#3279a8":"#ddd" }/>
                         <Text style={styles.feedCounts}>{post.likes}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{onReplyClick(post.id)}}>
-                        <Icon name="wechat" size={30} color="#888" />
+                        <Icon name="wechat" size={25} color="#888" />
                         <Text style={styles.feedCounts}>{post.repliesCount}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{onMessageClick(post.id)}}>
-                        <Icon name="message-plus" size={30} color={post.messagedBy?"#3279a8":"#ddd" } />
+                        <Icon name="message-plus" size={25} color={post.messagedBy?"#3279a8":"#ddd" } />
                         <Text style={styles.feedCounts}>{post.messageCounts}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{onSaveClick( post.id, post.savedByUser?"remove":"save")}}>
-                        <Icon name="content-save" size={30} color={post.savedByUser?"#3279a8":"#ddd" } />
+                        <Icon name="content-save" size={25} color={post.savedByUser?"#3279a8":"#ddd" } />
                         <Text style={styles.feedCounts}>{post.savesCounts}</Text>
                     </TouchableOpacity>
                 </View>

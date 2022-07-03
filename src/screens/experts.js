@@ -1,138 +1,231 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { 
     View, 
     StyleSheet,
-    Text,
-    Image,
     TouchableOpacity,
     ScrollView,
-    TextInput,
+    RefreshControl,
+    Text,
+    Alert,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { getData } from '../localStorage';
-
-// import { AntDesign } from '@expo/vector-icons';
-// import { MaterialIcons } from '@expo/vector-icons';
-import ConfirmDelete from '../components/confirmDelete';
-
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { setFakeProfileIdToOpen } from '../redux/states';
+
+import EmptyFeedsError from '../components/emptyFeedsError'
+import SearchBox from '../components/serchBox'
+import ExpertsPostCard from '../components/expertsPostCard';
+import FullExpertProfile from '../components/fullExpertProfile';
+import { useDispatch } from 'react-redux';
+import { setMessageBoxIdToOpenToOpen } from '../redux/states';
 
 
-const Experts = ({navigation}) => {
+import {
+    getExpertsProfilesInBatchApi,
+    getSavedExpertsProfilesInBatchApi,
+    starAnExpertPostByUserIdApi,
+    messageCountToExpertPostByUserIdApi,
+    addExpertToFavouriteListApi,
+} from '../apis';
 
-    const { baseUrl } = useSelector(state=>state.state);
+
+const AuthHome = ({ navigation }) => {
+    
     const dispatch = useDispatch();
 
     const [data, setData] = useState([]);
-    const [originalData, setOriginalData] = useState([]);
+    const [search, setSearch] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
+    const [isLoadMore, setIsLoadMore] = useState(false);
+    const [isWholeDataLoaded, setIsWholeDataLoaded] = useState(false);
     const [error, setError] = useState('');
 
-    const [openConfirm, setOpenConfirm] = useState(false);
-    const [toDelete, setToDelete] = useState('');
+    const [batchNo, setBatchNo] = useState(1);
+    const [batchSize, setBatchSize] = useState(25);
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const [getSavedProfile, setSavedProfileToggle] = useState(false);
 
-    const [search, setSearch] = useState('');
+    const [fullProfileId, setFullProfileId] = useState(0);
+    const [showFullProfile, setShowFullProfile] = useState(false);
 
-    const fetchFakeProfiles = async ()=>{
-        await axios.get(
-            `${baseUrl}getFakeProfiles/`,
-            {
-                headers: {
-                'Content-Type': "application/json",
-                'Accept': "application/json",
-                'Authorization': `Token ${await getData('token')}` 
-                }  
-            }        
-        ).then(res=>{
+    const onRefresh = () => {
+        setRefreshing(true);
+        setCurrentDateTime(new Date());
+        setBatchNo(1);
+        getPostsInBatch();
+        setIsWholeDataLoaded(false);
+    };
+
+    const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+        const paddingToBottom = 1;
+        return layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - paddingToBottom;
+    };
+
+    const loadMore = () => {
+        if(!isWholeDataLoaded){
+            setIsLoadMore(true);
+            // console.log("batch number => ", batchNo);
+            setBatchNo(prevBatchNo=>prevBatchNo+1);
+            getPostsInBatch();
+        }
+    }
+
+    const getPostsInBatch = async ()=>{
+        let body = {
+            searchKey: !!search? search: '',
+            batchNo,
+            batchSize,
+            datatime : currentDateTime,
+        }
+
+        var api;
+
+        if(getSavedProfile) api = getSavedExpertsProfilesInBatchApi;
+        else api = getExpertsProfilesInBatchApi;
+
+        await api(body).then(res=>{
             if (res.data.status==="success"){
-                setData(res.data.earlierProfiles);
-                setOriginalData(res.data.earlierProfiles);
+                if(res.data.data.length===0) setIsWholeDataLoaded(true);
+                else{
+                    if(isLoadMore && !refreshing){
+                        setData(tempData=>tempData.concat(res.data.data));
+                    }else{
+                        setData(res.data.data);
+                    }
+                }
             }else{
-                setError(res.data.message);
-                console.log(res.data.message);
+                setError(res.data?.message);
+            }
+        }).catch(err=>console.log(err));
+        setRefreshing(false);
+        setIsLoadMore(false)
+    }
+
+    const onLikeClick = async (id) => {
+        await starAnExpertPostByUserIdApi({id, type}).then(res=>{
+            console.log(res.data);
+            if(res.data.status==='success'){
+                let tempData = !!data? data : [];
+                setData(
+                    tempData.map(post=>{
+                        if(post.id===id){
+                            return {
+                                ...post,
+                                stars : type==='star'? post.stars+1 : post.stars-1,
+                                staredByUser: type==='star'? true : false
+                            };
+                        }else return post;
+                    })
+                );
             }
         }).catch(err=>console.log(err));
     }
-    const deleteFakeProfile = async ()=>{
-        await axios.post(
-            `${baseUrl}deleteFakeProfile/`,
-            {
-                id:toDelete
-            },
-            {
-                headers: {
-                'Content-Type': "application/json",
-                'Accept': "application/json",
-                'Authorization': `Token ${await getData('token')}` 
-                }  
-            }        
-        ).then(res=>{
-            console.log(res.data);
-            if (res.data.status==="success"){
-                setData(data.filter(d=>d.id!==toDelete));
-                setOriginalData(data.filter(d=>d.id!==toDelete));
-            }else{
-                setError(res.data.message);
+
+    const onSaveClick = async (id) => {
+        await addExpertToFavouriteListApi({id}).then(res=>{
+            if(res.data.status==='success'){
+                let tempData = !!data? data : [];
+                setData(
+                    tempData.map(post=>{
+                        if(post.id===id){
+                            return {
+                                ...post,
+                                favouriteExpertCount : res.data.type==='added'? post.favouriteExpertCount+1 : post.favouriteExpertCount-1,
+                                savedByUser: res.data.type==='added'? true : false
+                            };
+                        }else return post;
+                    })
+                );
             }
         }).catch(err=>console.log(err));
-        setOpenConfirm(false);
+    }
+    
+    const onMessageClick = async (id) => {
+        await messageCountToExpertPostByUserIdApi({id}).then(res=>{
+            console.log(res.data);
+            if(res.data.status==='success'){
+                let tempData = !!data? data : [];
+                setData(
+                    tempData.map(post=>{
+                        if(post.id===id){
+                            return {
+                                ...post,
+                                messageCounts : res.data.messageCounts,
+                                messagedByUser: true,
+                            };
+                        }else return post;
+                    })
+                );
+                dispatch(setMessageBoxIdToOpenToOpen(res.data.messageBoxId));
+                navigation.navigate('Messages');
+            }else{
+                Alert.alert("Fee is required...");
+            }
+        });
     }
 
     useEffect(()=>{
-        fetchFakeProfiles();
+        getPostsInBatch();
     },[]);
+
+    useEffect(()=>{
+        onRefresh();
+    },[getSavedProfile]);
 
     const searchFilter=(text)=>{
         setSearch(text);
-        setData(originalData.filter(d=>d.displayName.toUpperCase().search(text.toUpperCase())>-1))
     }
 
     return(
         <View style={styles.container}>
-            {/* {openConfirm && <ConfirmDelete
-                onCancel={()=>setOpenConfirm(false)}
-                onDelete={deleteFakeProfile}
-            />} */}
             <View style={{flex:1, width: "100%"}}>
-
-                <View style={styles.buttonsContainer}>
-                    <View style={{...styles.buttonView}}>
-                        <View style={{...styles.buttonProfile, padding: 0}}>
-                            <TextInput
-                                style={styles.searchTextInput}
-                                value={search}
-                                onChange={({ nativeEvent: { eventCount, target, text} })=>{searchFilter(text)}}
-                                placeholder="Search by profile name"
-                                autoComplete="email"
-                            />
-                        </View>
-                    </View>
-                </View>
-
-                <ScrollView contentContainerStyle={{...styles.buttonsContainer}}>
-                {data.map((profile)=>{
+                {showFullProfile && <>
+                    <FullExpertProfile expertPostId={fullProfileId} closeFullProfile={()=>setShowFullProfile(false)} />
+                </>}
+                <SearchBox onChange={searchFilter} value={search}/>
+                <ScrollView contentContainerStyle={{...styles.buttonsContainer}}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />}
+                    onScroll={({nativeEvent}) => {
+                        if (isCloseToBottom(nativeEvent)) {
+                            loadMore();
+                        }
+                        }}
+                        scrollEventThrottle={400}
+                >
+                {data?.map((post)=>{
                     return(
-                        <View key={profile.id} style={styles.buttonView}>
-                            <Text style={{...styles.buttonProfile, fontFamily: 'serif'}}>Make your first unknown profile</Text>
-                        </View>
+                            <ExpertsPostCard
+                                key={post.id}
+                                post={post}
+                                onLikeClick={onLikeClick}
+                                onMessageClick={onMessageClick}
+                                onSaveClick={onSaveClick}
+                                openProfile={(id)=>{setFullProfileId(id); setShowFullProfile(true);}}
+                            />
                         )
                     })}
-                    {originalData.length===0 && 
-                        <View style={styles.buttonView}>
-                            <Text style={{...styles.buttonProfile, fontFamily: 'serif'}}>Make your first unknown profile</Text>
-                        </View>
-                    }
+
+                    {isWholeDataLoaded ? <Text>You caught all</Text> : <>
+                    </>}
+                        {isLoadMore ? <Text>Loading...</Text> : <View style={styles.bottomEmptySpace}></View>}
+                    {data?.length===0 && <EmptyFeedsError/>}
                 </ScrollView>
-                <TouchableOpacity style={styles.plusIconContainer} onPress={()=>navigation.navigate('PlatformSelection')}>
-                        <Icon name="account-heart" size={50} color="#000" />
+                <TouchableOpacity style={styles.plusIconContainer} onPress={()=>{setSavedProfileToggle(!getSavedProfile); setSearch('');}}>
+                        {getSavedProfile?
+                            <Icon name="account-supervisor-circle" size={40} color="#000" />
+                        :
+                            <Icon name="heart-circle" size={40} color="#000" />
+                        }
                 </TouchableOpacity>
             </View>
         </View>
     )
 }
 
-export default Experts;
+export default AuthHome;
 
 const styles = StyleSheet.create({
     container: {
@@ -186,13 +279,7 @@ const styles = StyleSheet.create({
         right:20,
         backgroundColor:"rgba(0,0,0,0)"
     },
-    searchTextInput: {
-        backgroundColor: '#fff',
-        height: 40,
-        margin: 5,
-        // borderWidth: 1,
-        padding: 10,
-        paddingLeft:15,
-        width: '90%',
+    bottomEmptySpace:{
+        height: 20,
     },
   });

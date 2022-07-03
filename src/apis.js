@@ -3,6 +3,7 @@ import axios from "axios";
 import { getData } from "./localStorage";
 const baseUrl = 'http://backend.unknownchats.com/';
 
+// Seekers section
 export async function getPostsInBatchApi({ batchNo = 1, batchSize = 25, currentDateTime = new Date() }) {
     return await new Promise(async (onResolve, onReject) => {
         await axios.post(
@@ -222,6 +223,110 @@ export async function getMyPopularTagsApi() {
     return await new Promise(async (onResolve, onReject) => {
         await axios.get(
             `${baseUrl}getMyPopularTags/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+// Experts section
+export async function getExpertsProfilesInBatchApi({ batchNo = 1, batchSize = 25, currentDateTime = new Date(), searchKey=false }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}getExpertsProfilesInBatch/`,
+            {
+                searchKey: searchKey,
+                batchNo: batchNo,
+                batchSize: batchSize,
+                datatime: currentDateTime,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function getSavedExpertsProfilesInBatchApi({ batchNo = 1, batchSize = 25, currentDateTime = new Date(), searchKey=false }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}getSavedExpertsProfilesInBatch/`,
+            {
+                searchKey: searchKey,
+                batchNo: batchNo,
+                batchSize: batchSize,
+                datatime: currentDateTime,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function starAnExpertPostByUserIdApi({ id, type }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}starAnExpertPostByUserId/`,
+            {
+                id: id,
+                type: type
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function messageCountToExpertPostByUserIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}messageCountToExpertPostByUserId/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function addExpertToFavouriteListApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}addExpertToFavouriteList/`,
+            {
+                id: id,
+            },
             {
                 headers: {
                     'Content-Type': "application/json",
