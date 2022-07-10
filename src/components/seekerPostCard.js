@@ -254,12 +254,14 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
         fontFamily: 'serif',
+        color:'#555',
         paddingLeft: 10,
         // textDecorationLine : 'underline'
     },
     profileDescription : {
         fontSize: 10,
         fontFamily: 'serif',
+        color:'#555',
         paddingLeft: 10,
         // textDecorationLine : 'underline'
     },
@@ -268,6 +270,7 @@ const styles = StyleSheet.create({
     },
     postMainDescription : {
         fontFamily: 'serif',
+        color:'#555',
     },
     feedFooter: {
         flex:1,
@@ -280,6 +283,7 @@ const styles = StyleSheet.create({
     },
     feedCounts : {
         fontFamily: 'serif',
+        color:'#555',
         textAlign:'center'
     },
     repliesBlockContainer : {
@@ -329,6 +333,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         // fontWeight: "bold",
         fontFamily: 'serif',
+        color:'#555',
         paddingLeft: 20,
     },
 

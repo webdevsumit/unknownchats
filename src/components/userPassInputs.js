@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         fontFamily: 'serif',
+        color:'#555',
     },
     buttonView: {
         paddingTop: 10,
@@ -137,6 +138,7 @@ const styles = StyleSheet.create({
     linkText: {
         fontSize: 14,
         fontFamily: 'serif',
+        color:'#555',
         marginBottom: 5,
     },
     error: {

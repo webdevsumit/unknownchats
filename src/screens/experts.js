@@ -265,6 +265,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         // fontWeight: "bold",
         fontFamily: 'serif',
+        color:'#555',
         paddingLeft: 20,
     },
     profilePicture:{

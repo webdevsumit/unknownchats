@@ -67,7 +67,8 @@ const styles = StyleSheet.create({
     mainText: {
         fontSize: 30,
         fontWeight: "bold",
-        fontFamily: 'serif'
+        fontFamily: 'serif',
+        color:'#555',
     },
     button: {
         alignItems: "center",
@@ -83,7 +84,8 @@ const styles = StyleSheet.create({
         margin:10,
     },
     buttonText: {
-        fontFamily: 'serif'
+        fontFamily: 'serif',
+        color:'#555',
     },
     deleteButtonText: {
         fontFamily: 'serif',

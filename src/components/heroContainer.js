@@ -36,10 +36,12 @@ const styles = StyleSheet.create({
     mainText: {
         fontSize: 36,
         fontWeight: "bold",
-        fontFamily: 'serif'
+        fontFamily: 'serif',
+        color:'#555',
     },
     subHeadText: {
         opacity: 0.5,
         fontFamily: 'serif',
+        color:'#555',
     },
   });

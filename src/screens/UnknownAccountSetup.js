@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
           fontSize: 16,
           fontWeight: "bold",
           fontFamily: 'serif',
+          color:'#555',
       },
       profileContainer: {
           width:"100%",
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
           fontSize: 12,
           fontWeight: "bold",
           fontFamily: 'serif',
-      },
+          color:'#555',      },
       buttonView: {
           paddingTop: 10,
           paddingBottom: 20,

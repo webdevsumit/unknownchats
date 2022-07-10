@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
     },
     usernameText: {
         fontFamily: 'serif',
+        color:'#555',
         fontSize: 28,
         marginBottom: 20,
     },
@@ -232,6 +233,7 @@ const styles = StyleSheet.create({
     },
     emailText: {
         fontFamily: 'serif',
+        color:'#555',
         // fontSize: 28,
         marginRight: 10,
 

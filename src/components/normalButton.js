@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         fontFamily: 'serif',
+        color:'#555',
     },
     buttonView: {
         paddingTop: 10,

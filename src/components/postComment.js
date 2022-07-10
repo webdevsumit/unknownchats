@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     },
     comment: {
         fontFamily: 'serif',
+        color:'#555',
         textAlign: 'left',
     }
   });
