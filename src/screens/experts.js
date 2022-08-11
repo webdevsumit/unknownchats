@@ -101,9 +101,9 @@ const AuthHome = ({ navigation }) => {
     }
 
     const onLikeClick = async (id, type) => {
-        console.log("Id : ",id);
+        // console.log("Id : ",id);
         await starAnExpertPostByUserIdApi({id, type}).then(res=>{
-            console.log(res.data);
+            // console.log(res.data);
             if(res.data.status==='success'){
                 let tempData = !!data? data : [];
                 setData(
@@ -142,7 +142,7 @@ const AuthHome = ({ navigation }) => {
     
     const onMessageClick = async (id) => {
         await messageCountToExpertPostByUserIdApi({id}).then(res=>{
-            console.log(res.data);
+            // console.log(res.data);
             if(res.data.status==='success'){
                 let tempData = !!data? data : [];
                 setData(
@@ -165,7 +165,7 @@ const AuthHome = ({ navigation }) => {
     }
 
     const handleMessageOnExpertProfile = (id) => {
-        console.log("id : ", id);
+        // console.log("id : ", id);
         onMessageClick(id);
     }
 
