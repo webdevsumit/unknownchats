@@ -4,7 +4,8 @@ const initialState= {
   isLogin: false,
   messageBoxIdToOpen: 1,
   username:'',
-  baseUrl : 'http://backend.unknownchats.com/',
+  // baseUrl : 'http://backend.unknownchats.com/',
+  baseUrl : 'http://10.0.2.2:8000/',
 }
 
 export const stateSlice = createSlice({

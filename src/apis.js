@@ -1,7 +1,8 @@
 
 import axios from "axios";
 import { getData } from "./localStorage";
-const baseUrl = 'http://backend.unknownchats.com/';
+// const baseUrl = 'http://backend.unknownchats.com/';
+const baseUrl = 'http://10.0.2.2:8000/';
 
 // Seekers section
 export async function getPostsInBatchApi({ batchNo = 1, batchSize = 25, currentDateTime = new Date() }) {
@@ -324,6 +325,25 @@ export async function addExpertToFavouriteListApi({ id }) {
     return await new Promise(async (onResolve, onReject) => {
         await axios.post(
             `${baseUrl}addExpertToFavouriteList/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+export async function getFullExpertsProfileByIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}getFullExpertsProfileById/`,
             {
                 id: id,
             },

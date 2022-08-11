@@ -100,7 +100,8 @@ const AuthHome = ({ navigation }) => {
         setIsLoadMore(false)
     }
 
-    const onLikeClick = async (id) => {
+    const onLikeClick = async (id, type) => {
+        console.log("Id : ",id);
         await starAnExpertPostByUserIdApi({id, type}).then(res=>{
             console.log(res.data);
             if(res.data.status==='success'){
@@ -163,6 +164,11 @@ const AuthHome = ({ navigation }) => {
         });
     }
 
+    const handleMessageOnExpertProfile = (id) => {
+        console.log("id : ", id);
+        onMessageClick(id);
+    }
+
     useEffect(()=>{
         getPostsInBatch();
     },[]);
@@ -179,7 +185,7 @@ const AuthHome = ({ navigation }) => {
         <View style={styles.container}>
             <View style={{flex:1, width: "100%"}}>
                 {showFullProfile && <>
-                    <FullExpertProfile expertPostId={fullProfileId} closeFullProfile={()=>setShowFullProfile(false)} />
+                    <FullExpertProfile expertPostId={fullProfileId} closeFullProfile={()=>setShowFullProfile(false)} handleMessage={handleMessageOnExpertProfile} />
                 </>}
                 <SearchBox onChange={searchFilter} value={search}/>
                 <ScrollView contentContainerStyle={{...styles.buttonsContainer}}
