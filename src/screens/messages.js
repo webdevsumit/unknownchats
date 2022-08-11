@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
     View, 
     StyleSheet, 
@@ -6,8 +6,20 @@ import {
     Text,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
+import { setMessageBoxIdToOpen } from '../redux/states';
 
 const Message = () => {
+
+    const { messageBoxIdToOpen } = useSelector(state=>state.state);
+    const dispatch = useDispatch();
+
+    useEffect(()=>{
+        if(!!messageBoxIdToOpen){
+            console.log("Opening True messageBoxIdToOpen : ",messageBoxIdToOpen);
+            dispatch(setMessageBoxIdToOpen(null));
+        }
+    },[messageBoxIdToOpen]);
 
     return(
         <View>

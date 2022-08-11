@@ -14,7 +14,7 @@ import SearchBox from '../components/serchBox'
 import SeekerPostCard from '../components/seekerPostCard'
 import AddNewPost from '../components/addNewPost'
 import { useDispatch } from 'react-redux';
-import { setMessageBoxIdToOpenToOpen } from '../redux/states';
+import { setMessageBoxIdToOpen } from '../redux/states';
 
 
 import {
@@ -170,7 +170,7 @@ const AuthHome = ({ navigation }) => {
                         }else return post;
                     })
                 );
-                dispatch(setMessageBoxIdToOpenToOpen(res.data.messageBoxId));
+                dispatch(setMessageBoxIdToOpen(res.data.messageBoxId));
                 navigation.navigate('Messages');
             }
         });

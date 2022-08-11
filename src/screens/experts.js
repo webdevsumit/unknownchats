@@ -15,7 +15,7 @@ import SearchBox from '../components/serchBox'
 import ExpertsPostCard from '../components/expertsPostCard';
 import FullExpertProfile from '../components/fullExpertProfile';
 import { useDispatch } from 'react-redux';
-import { setMessageBoxIdToOpenToOpen } from '../redux/states';
+import { setMessageBoxIdToOpen } from '../redux/states';
 
 
 import {
@@ -156,7 +156,7 @@ const AuthHome = ({ navigation }) => {
                         }else return post;
                     })
                 );
-                dispatch(setMessageBoxIdToOpenToOpen(res.data.messageBoxId));
+                dispatch(setMessageBoxIdToOpen(res.data.messageBoxId));
                 navigation.navigate('Messages');
             }else{
                 Alert.alert("Fee is required...");

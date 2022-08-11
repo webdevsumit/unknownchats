@@ -4,7 +4,7 @@ import { getData } from "./localStorage";
 // const baseUrl = 'http://backend.unknownchats.com/';
 const baseUrl = 'http://10.0.2.2:8000/';
 
-// Seekers section
+// Seekers Section
 export async function getPostsInBatchApi({ batchNo = 1, batchSize = 25, currentDateTime = new Date() }) {
     return await new Promise(async (onResolve, onReject) => {
         await axios.post(
@@ -237,7 +237,7 @@ export async function getMyPopularTagsApi() {
     });
 }
 
-// Experts section
+// Experts Section
 export async function getExpertsProfilesInBatchApi({ batchNo = 1, batchSize = 25, currentDateTime = new Date(), searchKey=false }) {
     return await new Promise(async (onResolve, onReject) => {
         await axios.post(
@@ -359,3 +359,5 @@ export async function getFullExpertsProfileByIdApi({ id }) {
             .catch(err => onReject(err));
     });
 }
+
+// Messages Section
