@@ -361,3 +361,76 @@ export async function getFullExpertsProfileByIdApi({ id }) {
 }
 
 // Messages Section
+export async function getSeekerMessageBoxesApi() {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.get(
+            `${baseUrl}getSeekerMessageBoxes/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+export async function getExpertMessageBoxesApi() {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.get(
+            `${baseUrl}getExpertMessageBoxes/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+export async function getMessagesByMessageBoxIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}getMessagesByMessageBoxId/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+export async function deleteMessagesBoxByIdApi({ id }) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}deleteMessagesBoxById/`,
+            {
+                id: id,
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${await getData('token')}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}

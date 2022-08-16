@@ -19,7 +19,7 @@ const ExpertsPostCard = ({ post, onLikeClick, onSaveClick, onMessageClick, openP
             <View style={styles.feedSubMainContainer}>
                 <View style={styles.feedHeader}>
                     <View style={styles.feedHeaderLeft}>
-                        <Image style={styles.profilePicture} source={{uri:post.profilePicture}}/>
+                        <Image style={styles.profilePicture} source={{uri:post.profilePicture?.picture}}/>
                         <View style={styles.profileDescriptionContainer}>
                             <Text style={styles.profileName}>{post.displayName}</Text>
                             <Text style={styles.profileDescription}>{post.expertsShortDescription}</Text>

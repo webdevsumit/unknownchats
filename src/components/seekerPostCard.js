@@ -54,7 +54,7 @@ const SeekerPostCard = ({ post, onLikeClick, onRejectClick, onSaveClick, onMessa
             <View style={styles.feedSubMainContainer}>
                 <View style={styles.feedHeader}>
                     <View style={styles.feedHeaderLeft}>
-                        <Image style={styles.profilePicture} source={{uri:post.owner.profilePicture}}/>
+                        <Image style={styles.profilePicture} source={{uri:post.owner.profilePicture?.picture}}/>
                         <View style={styles.profileDescriptionContainer}>
                             <Text style={styles.profileName}>{post.owner.user.username}</Text>
                             <Text style={styles.profileDescription}>{post.owner.shortDescription}</Text>

@@ -41,7 +41,7 @@ function FullExpertProfile({ expertPostId, closeFullProfile, handleMessage }) {
                         </>:<>
                         <View>
                             <View style={styles.feedHeader}>
-                                <Image style={styles.profilePicture} source={{uri:profile.profilePicture}}/>
+                                <Image style={styles.profilePicture} source={{uri:profile.profilePicture?.picture}}/>
                                 <View style={styles.profileDescriptionContainer}>
                                     <Text style={styles.profileName}>{profile.displayName}</Text>
                                     <Text style={styles.profileDescription}>{profile.expertsShortDescription}</Text>

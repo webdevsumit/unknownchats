@@ -159,7 +159,7 @@ const AuthHome = ({ navigation }) => {
                 dispatch(setMessageBoxIdToOpen(res.data.messageBoxId));
                 navigation.navigate('Messages');
             }else{
-                Alert.alert("Fee is required...");
+                Alert.alert(res.data.message);
             }
         });
     }
